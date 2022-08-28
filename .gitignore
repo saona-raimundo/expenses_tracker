@@ -1,0 +1,9 @@
+# npm modules
+node_modules
+
+# yarn compilation
+dist
+yarn-error.log
+
+# parcel compilation
+.parcel-cache
