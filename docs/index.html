@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Expenses tracker</title>
+	<meta name="description" content="Track your expenses.">
+	<meta name="author" content="Raimundo Saona" href="https://saona-raimundo.github.io/">
+	<link rel="stylesheet" href="/index.2cdaf7bc.css">
+	<link rel="manifest" href="/pwa.webmanifest">
+	<script src="/index.0641b553.js" defer=""></script>
+	<link rel="icon" href="/favicon.824cf0c5.ico">
+	<!-- Theme color hint to have a more coherent match with browser windows -->
+	<meta name="theme-color" content="#B12A34"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	<noscript>
+		This site requires Java Script enable to do anything meaningful.
+		<style>.dynamic {
+  display: none;
+}
+
+</style>
+	</noscript>
+	<main>
+		<h1>Expenses tracker</h1>
+		<form>
+			<fieldset>
+				<legend>New entry</legend>
+				<input type="button" id="reset" value="Reset values" class="dynamic"> 
+				<div class="entry">
+					<label for="datePicker">Date:</label>
+					<input type="date" id="datePicker" name="date" required="" pattern="\d{4}-\d{2}-\d{2}"> 
+				</div>
+				<div class="entry">
+					<label for="ammount">Ammount:</label>
+					<input type="number" id="ammount" name="ammount" min="0" step="0.01" value="0.00">
+				</div>
+				<div class="entry">
+					<label for="comment">Comment:</label>
+					<input type="text" id="comment" name="comment">
+				</div>
+				<div class="entry">
+					<label for="image">Image:</label>
+					<input type="file" id="image" name="image" accept="image/bmp,image/jpeg,image/svg+xml">
+				</div>
+				<div class="entry">
+					<label for="account">Account:</label>
+					<select name="account" id="account">
+						<option value="mine" selected="selected">Mine</option>
+						<option value="shared">Shared</option>
+						<option value="delfi">Delfi</option>
+						<option value="work">Work</option>
+						<option value="semishared">Semi-shared</option>
+					</select> 
+				</div>
+				<div class="entry">
+					<label for="category">Category:</label>
+					<select name="category" id="category">
+						<option value="food" selected="selected">🍴</option>
+						<option value="transport">🚆</option>
+						<option value="health">⚕️</option>
+						<option value="celebration">🎉</option>
+						<option value="gift">🎁</option>
+						<option value="travel">🗺️</option>
+						<option value="home">🏠</option>
+						<option value="other">❔</option>
+					</select> 
+				</div>
+			</fieldset>
+		 	<input type="submit" id="submit" value="Add entry" class="dynamic">
+		</form>
+
+		<ol id="list" class="dynamic">
+			<!-- Data should be loaded here -->
+		</ol>
+
+		<button id="clear" class="dynamic">Clear</button>
+		<button id="download" class="dynamic">Download</button>
+	</main>
+	<footer>
+		<p>Source code: <a href="https://github.com/saona-raimundo/expenses">GitHub</a></p>
+		<p>Author: <a href="https://saona-raimundo.github.io/">Raimundo Saona</a></p>
+	</footer>
+
+
+</body>
+</html>
+

@@ -1,0 +1,1 @@
+{"name":"Minimal Progressive Web App","short_name":"minimalPWA","description":"Minimal Progressive Web App.","icons":[{"src":"/icon-32.30bed506.png","sizes":"32x32","type":"image/png"},{"src":"/icon-512.db21d1fc.png","sizes":"512x512","type":"image/png"}],"start_url":"/index.html","display":"fullscreen","theme_color":"#B12A34","background_color":"#B12A34"}
