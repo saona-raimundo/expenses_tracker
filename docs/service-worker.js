@@ -536,12 +536,11 @@ console.log("[Service Worker] Running");
 // Create a list of all the files to be cached
 const cacheName = "PWA-v0-0-1";
 const appShellFiles = [
-    "/",
-    "/app.js",
-    "/favicon.ico",
-    "/image.jpg",
-    "/index.html",
-    "/style.css", 
+    "./",
+    "./app.js",
+    "./favicon.ico",
+    "./index.html",
+    "./style.css", 
 ];
 const contentToCache = appShellFiles;
 // Install the service worker

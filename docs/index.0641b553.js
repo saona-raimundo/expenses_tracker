@@ -535,7 +535,7 @@ function hmrAcceptRun(bundle, id) {
 // Register a service worker
 console.log("[App] Register a Service worker.");
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register(require("36b4b762a6de827a"));
+    navigator.serviceWorker.register(require("abe7e16ab117bf3"));
     console.log("[App] Succesfully registered a service worker.");
 } else console.error("[App] The app will not work offline: the browser does not support Service workers.");
 window.addEventListener("DOMContentLoaded", (event)=>{
@@ -845,7 +845,7 @@ window.addEventListener("DOMContentLoaded", (event)=>{
     });
 });
 
-},{"36b4b762a6de827a":"es18N"}],"es18N":[function(require,module,exports) {
+},{"abe7e16ab117bf3":"es18N"}],"es18N":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("lPpKD") + "service-worker.js" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}],"lgJ39":[function(require,module,exports) {

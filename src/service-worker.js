@@ -4,12 +4,11 @@ console.log('[Service Worker] Running');
 
 const cacheName = 'PWA-v0-0-1';
 const appShellFiles = [
-  '/',
-  '/app.js',
-  '/favicon.ico',
-  '/image.jpg',
-  '/index.html',
-  '/style.css',
+  './',
+  './app.js',
+  './favicon.ico',
+  './index.html',
+  './style.css',
 ];
 const contentToCache = appShellFiles;
 

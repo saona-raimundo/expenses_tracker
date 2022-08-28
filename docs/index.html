@@ -5,10 +5,10 @@
 	<title>Expenses tracker</title>
 	<meta name="description" content="Track your expenses.">
 	<meta name="author" content="Raimundo Saona" href="https://saona-raimundo.github.io/">
-	<link rel="stylesheet" href="./index.2cdaf7bc.css">
-	<link rel="manifest" href="./pwa.webmanifest">
-	<script src="./index.0641b553.js" defer=""></script>
-	<link rel="icon" href="./favicon.824cf0c5.ico">
+	<link rel="stylesheet" href="/index.2cdaf7bc.css">
+	<link rel="manifest" href="/pwa.webmanifest">
+	<script src="/index.0641b553.js" defer=""></script>
+	<link rel="icon" href="/favicon.824cf0c5.ico">
 	<!-- Theme color hint to have a more coherent match with browser windows -->
 	<meta name="theme-color" content="#B12A34"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,7 @@
 				<input type="button" id="reset" value="Reset values" class="dynamic"> 
 				<div class="entry">
 					<label for="datePicker">Date:</label>
-					<input type="date" id="datePicker" name="date" required="" pattern="\d{4}-\d{2}-\d{2}"> 
+					<input type="date" id="datePicker" name="date" required=""> 
 				</div>
 				<div class="entry">
 					<label for="ammount">Ammount:</label>
@@ -79,6 +79,13 @@
 		<button id="download" class="dynamic">Download</button>
 	</main>
 	<footer>
+		<details>
+			<summary>README</summary>
+			<h2>Storage</h2>
+			<p>Data is saved in web storage. Therefore, it is accessible only by this website.</p>
+			<p>Functionality assets are saved using Service workers. Therefore, they are available offline and updated when there is internet access.</p>
+			<p>The browser manages all data. Therefore, <strong>the browser may decide to delete your data without notice</strong>.</p>
+		</details>
 		<p>Source code: <a href="https://github.com/saona-raimundo/expenses_tracker">GitHub</a></p>
 		<p>Author: <a href="https://saona-raimundo.github.io/">Raimundo Saona</a></p>
 	</footer>
