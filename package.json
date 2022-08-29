@@ -4,11 +4,6 @@
   "description": "Track your expenses",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "source": "src/index.html",
-  "scripts": {
-    "check": "vnu --also-check-css --also-check-svg --verbose src",
-    "start": "parcel",
-    "build": "parcel build"
-  },
   "author": "Raimundo Saona",
   "license": "MIT",
   "dependencies": {

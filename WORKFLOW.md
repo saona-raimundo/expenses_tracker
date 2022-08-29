@@ -24,3 +24,10 @@
 	- Information 
 		- General tools
 			- https://w3c.github.io/developers/tools/
+
+## Deployment
+
+1. Clear `dist` directory 
+2. `yarn build`
+3. Copy `dist` folder to `docs` folder
+4. Replace all paths in html by relative paths starting with `./`

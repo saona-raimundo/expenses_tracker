@@ -1,0 +1,95 @@
+# Run using
+# ```
+# makers --makefile .\scripts.toml <TASK>
+# ```
+# See documentation: https://github.com/sagiegurari/cargo-make
+
+[config]
+default_to_workspace = false
+load_cargo_aliases = true
+
+[tasks.check]
+command = "vnu" # https://github.com/validator/validator
+args = ["--also-check-css", "--also-check-svg", "--verbose", "src"]
+
+[tasks.start]
+command = "yarn" # https://yarnpkg.com/
+args = ["run", "parcel"]
+
+[tasks.parcel-build]
+script_runner = "@shell"
+script = "yarn run parcel build" # https://yarnpkg.com/
+dependencies = ["clean-dist"]
+
+[tasks.deploy]
+dependencies = ["clean-all", "parcel-build", "correct-links"]
+
+[tasks.clean-all]
+dependencies = ["clean-dist", "clean-docs"]
+
+###################################################
+#				MINOR TASKS
+###################################################
+
+[tasks.clean-dist]
+script_runner = "@rust"
+script = '''
+use std::fs;
+fn main() -> std::io::Result<()> {
+	let dir = "dist";
+	if let Err(e) = fs::remove_dir_all(dir) {
+		if let std::io::ErrorKind::NotFound = e.kind() {
+				eprintln!("By the way...\n{}", e);
+		} else {
+			return Err(e);
+		}
+	}
+    Ok(())
+}
+'''
+
+[tasks.clean-docs]
+script_runner = "@rust"
+script = '''
+use std::fs;
+fn main() -> std::io::Result<()> {
+	let dir = "docs";
+	if let Err(e) = fs::remove_dir_all(dir) {
+		if let std::io::ErrorKind::NotFound = e.kind() {
+				eprintln!("By the way...\n{}", e);
+		} else {
+			return Err(e);
+		}
+	}
+    Ok(())
+}
+'''
+
+[tasks.mkdir-docs]
+script_runner = "@rust"
+script = '''
+use std::fs;
+
+fn main() -> std::io::Result<()> {
+    fs::create_dir("docs")?;
+    Ok(())
+}
+'''
+dependencies = ["clean-docs"]
+
+[tasks.copy-dist]
+command = "xcopy" # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/xcopy
+args = ["dist", "docs", "/E"]
+dependencies = ["mkdir-docs"]
+
+[tasks.correct-links-href]
+command = "sd" # https://crates.io/crates/sd
+args = ["href=\"/", "href=\"./", "docs/index.html"]
+
+[tasks.correct-links-src]
+command = "sd" # https://crates.io/crates/sd
+args = ["src=\"/", "src=\"./", "docs/index.html"]
+
+[tasks.correct-links]
+dependencies = ["copy-dist", "correct-links-href", "correct-links-src"]
+
