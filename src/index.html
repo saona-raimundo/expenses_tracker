@@ -4,7 +4,8 @@
 	<meta charset="utf-8">
 	<title>Expenses tracker</title>
 	<meta name="description" content="Track your expenses.">
-	<meta name="author" content="Raimundo Saona" href="https://saona-raimundo.github.io/">
+	<meta name="author" content="Raimundo Saona">
+	<link type="text/plain" rel="author" href="./humans.txt" />
 	<link rel="stylesheet" href="./style.css">
 	<link rel="manifest" href="./pwa.webmanifest">
 	<script src="./app.js" type="module"></script>
@@ -32,13 +33,13 @@
 				</div>
 				<div class="entry">
 					<label for="ammount">Ammount:</label>
-					<input type="number" id="ammount" name="ammount" min="0" step="0.01" value="0.00">
+					<input type="number" id="ammount" name="ammount" min="0" step="0.01" placeholder="0.00">
 				</div>
 				<div class="entry">
 					<label for="comment">Comment:</label>
 					<input type="text" id="comment" name="comment">
 				</div>
-				<div class="entry">
+				<div class="entry" style="display: none;">
 					<label for="image">Image:</label>
 					<input type="file" id="image" name="image" accept="image/bmp,image/jpeg,image/svg+xml">
 				</div>
@@ -47,7 +48,7 @@
 					<select name="account" id="account">
 						<option value="mine" selected="selected">Mine</option>
 						<option value="shared">Shared</option>
-						<option value="delfi">Delfi</option>
+						<option value="partner">Partner</option>
 						<option value="work">Work</option>
 						<option value="semishared">Semi-shared</option>
 					</select> 
@@ -56,7 +57,7 @@
 					<label for="category">Category:</label>
 					<select name="category" id="category">
 						<option value="food" selected="selected">🍴</option>
-						<option value="transport">🚆</option>
+						<option value="transport">🚇</option>
 						<option value="health">⚕️</option>
 						<option value="celebration">🎉</option>
 						<option value="gift">🎁</option>

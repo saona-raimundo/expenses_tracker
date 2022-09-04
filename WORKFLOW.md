@@ -2,12 +2,13 @@
 
 ## Developing
 
-- `yarn start`
+- Start 
 	- Prebuilding, serving and watching
+	- `makers --makefile .\scripts.toml start`
 - Checking
+	- `makers --makefile .\scripts.toml check`
 	- HTML, CSS, SVG W3C validator `vnu`
-		- `yarn run check`
-			- `vnu --also-check-css --also-check-svg --verbose src`
+		- `vnu --also-check-css --also-check-svg --verbose src`
 		- https://validator.w3.org/
 	- Vulnerabilities
 		- `yarn audit`
@@ -27,7 +28,4 @@
 
 ## Deployment
 
-1. Clear `dist` directory 
-2. `yarn build`
-3. Copy `dist` folder to `docs` folder
-4. Replace all paths in html by relative paths starting with `./`
+1. `makers --makefile .\scripts.toml deploy`

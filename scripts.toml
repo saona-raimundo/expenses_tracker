@@ -8,13 +8,13 @@
 default_to_workspace = false
 load_cargo_aliases = true
 
-[tasks.check]
-command = "vnu" # https://github.com/validator/validator
-args = ["--also-check-css", "--also-check-svg", "--verbose", "src"]
+[tasks.parcel-check]
+script_runner = "@shell"
+script = 'vnu --skip-non-html --also-check-css --also-check-svg src' # https://github.com/validator/validator
 
 [tasks.start]
-command = "yarn" # https://yarnpkg.com/
-args = ["run", "parcel"]
+script_runner = "@shell"
+script = "yarn run parcel" # https://yarnpkg.com/
 
 [tasks.parcel-build]
 script_runner = "@shell"

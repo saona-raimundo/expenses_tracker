@@ -1,3 +1,11 @@
+// if ('serviceWorker' in navigator) {
+//   caches.keys().then(function(cacheNames) {
+//     cacheNames.forEach(function(cacheName) {
+//       caches.delete(cacheName);
+//     });
+//   });
+// }
+
 // Register a service worker
 console.log('[App] Register a Service worker.')
 if ('serviceWorker' in navigator) {
@@ -13,10 +21,9 @@ if ('serviceWorker' in navigator) {
 
 
 window.addEventListener('DOMContentLoaded', (event) => {
-	console.log('[App] DOM fully loaded and parsed, starting dynamic content.');
+	console.log('[App] START Load dynamic content.');
 
-	const SCHEMA_VERSION = 1;
-
+	// UI elements
 	const list = document.querySelector('#list');
 	const form = document.querySelector('form');
 	const dateInput = document.querySelector('#datePicker');
@@ -27,35 +34,36 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	const categoryInput = document.querySelector('#category');
 	const submitBtn = document.querySelector('#submit');
 
-	// Create an instance of a db object for us to store the open database in
+	// Hold an instance of a db object for us to store the IndexedDB data in
 	let db;
+	const SCHEMA_VERSION = 1;
+
+	console.log('[App] END Initialize app.');
+
 	// Open our database; it is created if it doesn't already exist
 	// (see the upgradeneeded handler below)
 	const openRequest = window.indexedDB.open('expenses_db', SCHEMA_VERSION);
 
 	// Handle errors
 	// `error` handle signifies that the database didn't open successfully
-	openRequest.addEventListener('error', () => {
-		console.error('Database failed to open');
-		alert("Database could not open for some reason!");
+	openRequest.addEventListener('error', (e) => {
+		console.error('[App] Database failed to open.');
+		console.error(e);
+		alert("Database could not open!");
 	});
 
-	// `success` handler signifies that the database opened successfully
-	openRequest.addEventListener('success', () => {
-		console.log('[App] Database opened successfully.');
-
-		// Store the opened database object in the db variable. This is used a lot below
-		db = openRequest.result;
-
-		// Run the displayData() function to display the notes already in the IDB
-		displayData();
-	});
-
+	// Handle upgrading version
 	// `upgradeneeded` handler signifies that the requested database does not exists yet
 	// Set up the database tables if this has not already been done
 	openRequest.addEventListener('upgradeneeded', (e) => {
 		// Grab a reference to the opened database
 		db = e.target.result;
+
+		db.onerror = (event) => {
+			console.error('[App] Database failed to upgrade.');
+			console.error(event);
+			alert("Database could not upgrade!");
+		};
 
 		// Create an objectStore to store our notes in (basically like a single table)
 		// including a auto-incrementing key
@@ -70,80 +78,65 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		objectStore.createIndex('account', 'account', { unique: false });
 		objectStore.createIndex('category', 'category', { unique: false });
 
-		console.log('[App] Database setup complete.');
+		console.log('[App] END Create object store.');
 	});
 
-	// Add entry
-	// Create a submit event handler so that when the form is submitted the addData() function is run
-	form.addEventListener('submit', addData);
-
-	function addData(e) {
-		console.log('[App] Add new entry to the database.');
-		// prevent default - we don't want the form to submit in the conventional way
-		e.preventDefault();
-
-		// grab the values entered into the form fields and store them in an object ready for being inserted into the DB
-		const newItem = { 
-			date: dateInput.value, 
-			ammount: ammountInput.value,
-			comment: commentInput.value,
-			image: imageInput.value,
-			account: accountInput.value,
-			category: categoryInput.value,
-		};
-
-		// open a read/write db transaction, ready for adding the data
-		const transaction = db.transaction(['expenses_object_store'], 'readwrite');
-
-		// call an object store that's already been added to the database
-		const objectStore = transaction.objectStore('expenses_object_store');
-
-		// Make a request to add our newItem object to the object store
-		const addRequest = objectStore.add(newItem);
-
-		addRequest.addEventListener('success', () => {
-			// Clear the form, ready for adding the next entry
-			const reset_button = document.getElementById('reset');
-			reset_button.click();
-		});
-
-		// Report on the success of the transaction completing, when everything is done
-		transaction.addEventListener('complete', () => {
-			console.log('[App] Added new entry to database.');
-			// update the display of data to show the newly added item, by running displayData() again.
-			displayData();
-		});
-
-		transaction.addEventListener('error', () => console.log('Transaction not opened due to error.'));
-	}
-
+	// `success` handler signifies that the database opened successfully
+	openRequest.addEventListener('success', () => {
+		console.log('[App] END Open database.');
+		// Store the opened database object in the db variable. This is used a lot below
+		db = openRequest.result;
+		displayData();
+	});
+	
 	// Display data in database
 	function displayData() {
-		console.log('[App] Display data in the database.');
+		console.log('[App] START Empty list.');
 		// Empty the contents of the list element
 		// If you didn't do this, you'd get duplicates listed each time a new note is added
 		while (list.firstChild) {
 			list.removeChild(list.firstChild);
 		}
 
-		// Open our object store and then get a cursor - which iterates through all the
-		// different data items in the store
-		const objectStore = db.transaction('expenses_object_store').objectStore('expenses_object_store');
-		objectStore.openCursor().addEventListener('success', (e) => {
-			// Get a reference to the cursor
-			const cursor = e.target.result;
+		// open a read/write db transaction, ready for adding the data
+		const transaction = db.transaction('expenses_object_store', 'readonly');
+		// call an object store that's already been added to the database
+		const objectStore = transaction.objectStore('expenses_object_store');
+		const request = objectStore.getAll();
 
-			// If there is still another data item to iterate through, keep running this code
-			if (cursor) {
-				// grab the values entered into the form fields and store them in an object ready for being inserted into the DB
-				const entry = { 
-					date: cursor.value.date, 
-					ammount: cursor.value.ammount,
-					comment: cursor.value.comment,
-					image: cursor.value.image,
-					account: cursor.value.account,
-					category: cursor.value.category,
-				};
+		request.addEventListener('error', () => {
+			console.error('[App] Database failed to open.');
+			console.error(event);
+			alert("Database could not open for some reason!");
+		});
+		request.addEventListener('success', () => {
+			// store the result of opening the database.
+			const data = request.result;
+	
+			if (!data.length && !list.firstChild) {
+				// Again, if list item is empty, display a 'No notes stored' message
+				const listItem = document.createElement('li');
+				listItem.textContent = 'No entries stored.'
+				list.appendChild(listItem);
+				return;
+			}
+
+			// Sort the array per date, decreasing
+			console.log(data);
+			data.sort(function(entry1, entry2){
+				if (entry1.date > entry2.date) {
+					return -1;
+				} if (entry1.date < entry2.date) {
+					return 1;
+				}
+				return 0;
+			});
+			console.log(data);
+
+			for (let i = 0; i < data.length; i++) {
+				const entry = data[i];
+				console.log("[App] START Display entry.");
+				console.log(entry);
 
 				// Create a list item, h3, and p to put each data item inside when displaying it
 				// structure the HTML fragment, and append it inside the list
@@ -184,38 +177,75 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 				// Store the ID of the data item inside an attribute on the listItem, so we know
 				// which item it corresponds to. This will be useful later when we want to delete items
-				listItem.setAttribute('data-entry-id', cursor.value.id);
+				listItem.setAttribute('data-entry-id', entry.id);
 
 				// Create a button and place it inside each listItem
 				const deleteBtn = document.createElement('button');
 				listItem.appendChild(deleteBtn);
 				deleteBtn.textContent = 'Delete';
 				deleteBtn.setAttribute('class', 'delete');
-
-				// Create a button and place it inside each listItem
-				const editBtn = document.createElement('button');
-				listItem.appendChild(editBtn);
-				editBtn.textContent = 'Edit';
-
 				// Set an event handler so that when the button is clicked, the deleteItem()
 				// function is run
-				deleteBtn.addEventListener('click', deleteEntry);
-				editBtn.addEventListener('click', editEntry);
-
-				// Iterate to the next item in the cursor
-				cursor.continue();
-			} else {
-				// Again, if list item is empty, display a 'No notes stored' message
-				if (!list.firstChild) {
-					const listItem = document.createElement('li');
-					listItem.textContent = 'No entries stored.'
-					list.appendChild(listItem);
-				}
-				// if there are no more cursor items to iterate through, say so
-				console.log('[App] All notes displayed.');
+				deleteBtn.addEventListener('click', deleteEntry);	
 			}
+
+			console.log('[App] END Display all entries.');
+		});
+
+	}
+
+	// Add entry
+	// Create a submit event handler so that when the form is submitted the addData() function is run
+	form.addEventListener('submit', addData);
+
+	function addData(e) {
+		// prevent default - we don't want the form to submit in the conventional way
+		e.preventDefault();
+
+		console.log('[App] START Add new entry to the database.');
+
+		// grab the values entered into the form fields and store them in an object ready for being inserted into the DB
+		const newItem = { 
+			date: dateInput.value, 
+			ammount: ammountInput.value,
+			comment: commentInput.value,
+			image: imageInput.value,
+			account: accountInput.value,
+			category: categoryInput.value,
+		};
+
+		// open a read/write db transaction, ready for adding the data
+		const transaction = db.transaction(['expenses_object_store'], 'readwrite');
+
+		// Report on the success of the transaction completing, when everything is done
+	    transaction.oncomplete = () => {
+			console.log("[App] END Add entry.");
+
+			// Update the display of data to show the newly added item, by running displayData() again.
+			displayData();
+	    };
+
+	    // Handler for any unexpected error
+	    transaction.onerror = (e) => {
+			console.error("[App] Failed to add an entry!");
+			console.log(e);
+	    };
+
+		// call an object store that's already been added to the database
+		const objectStore = transaction.objectStore('expenses_object_store');
+
+		// Make a request to add our newItem object to the object store
+		const addRequest = objectStore.add(newItem);
+
+		addRequest.addEventListener('success', () => {
+			console.log("[App] END Add new entry.");
+			// Clear the form, ready for adding the next entry
+			const reset_button = document.querySelector('#reset');
+			reset_button.click();
 		});
 	}
+
+	
 
 	// Delete entry
 	function deleteEntry(e) {
@@ -224,7 +254,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		// values are type-sensitive.
 		const entryId = Number(e.target.parentNode.getAttribute('data-entry-id'));
 
-		console.log(`[App] Delete entry ${entryId}.`);
+		console.log(`[App] START Delete entry ${entryId}.`);
 
 		// open a database transaction and delete the task, finding it using the id we retrieved above
 		const transaction = db.transaction(['expenses_object_store'], 'readwrite');
@@ -240,19 +270,18 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				console.log(`[App] Entry ${entryId} deleted.`);
 			}
 
-			// Again, if list item is empty, display a 'No notes stored' message
-			if (!list.firstChild) {
-				const listItem = document.createElement('li');
-				listItem.textContent = 'No entries stored.'
-				list.appendChild(listItem);
-			}
+			// Display list again
+			displayData();
 		});
+
+		// Handler for any unexpected error
+	    transaction.onerror = (e) => {
+			console.error("[App] Failed to delete an entry!");
+			console.log(e);
+	    };
 	}
 
-	// Delete entry
-	function editEntry(e) {
-		alert("WIP")
-	}
+
 	/////////////////////////////////////////////
 	// Actionable buttons
 	/////////////////////////////////////////////
@@ -271,7 +300,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	reset_button.addEventListener('click', (event) => {
 		console.log('[App] Reset form.');
 		getDate();
-		document.getElementById("ammount").value = 0.00;
+		document.getElementById("ammount").value = "";
 		document.getElementById("comment").value = "";
 		document.getElementById("image").value = "";
 		console.log('[App] Reseted form.');
@@ -349,7 +378,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			deleteButton.click();
 		});
 		console.log('[App] Cleared database.');
-		// Run the displayData() function to display the notes already in the IDB
-		displayData();
 	});
 });
